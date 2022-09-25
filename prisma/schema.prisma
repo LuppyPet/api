@@ -5,7 +5,140 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String        @id @default(uuid())
+  name           String
+  email          String        @unique
+  password       String
+  cityId         String
+  city           City          @relation(fields: [cityId], references: [id])
+  organization   Organization? @relation("owner")
+  organizationId String?
+  member         Organization? @relation("member", fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  UserTokens     UserToken[]
+
+  @@map("users")
+}
+
+model UserToken {
+  id           String   @id @default(uuid()) @db.VarChar(255)
+  refreshToken String   @db.VarChar(255)
+  userId       String?  @db.VarChar(255)
+  expiresAt    DateTime @db.Timestamp(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "FKUserToken")
+  @@map("user_tokens")
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  cnpj      String
+  cityId    String
+  city      City     @relation(fields: [cityId], references: [id])
+  ownerId   String   @unique
+  owner     User     @relation("owner", fields: [ownerId], references: [id])
+  members   User[]   @relation("member")
+  animals   Animal[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("organizations")
+}
+
+model Animal {
+  id             String          @id @default(uuid())
+  name           String?
+  specieId       String
+  specie         Specie?         @relation(fields: [specieId], references: [id])
+  desease        AnimalDisease[]
+  organizationId String?
+  organization   Organization?   @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@map("animals")
+}
+
+model AnimalDisease {
+  animalId  String
+  animal    Animal   @relation(fields: [animalId], references: [id])
+  diseaseId String
+  disease   Disease  @relation(fields: [diseaseId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([animalId, diseaseId])
+  @@map("animal_diseases")
+}
+
+model Disease {
+  id            String          @id @default(uuid())
+  name          String          @unique
+  contagious    Boolean
+  animalDisease AnimalDisease[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@map("diseases")
+}
+
+model Specie {
+  id        String   @id @default(uuid())
+  name      String
+  class     String
+  Animal    Animal[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("species")
+}
+
+model Country {
+  id     String  @id @default(uuid())
+  namePt String
+  nameEn String
+  code   String
+  State  State[]
+
+  @@map("countries")
+}
+
+model State {
+  id        String  @id @default(uuid())
+  namePt    String
+  nameEn    String
+  code      String  @unique
+  countryId String
+  country   Country @relation(fields: [countryId], references: [id])
+  City      City[]
+
+  @@map("states")
+}
+
+model City {
+  id           String         @id @default(uuid())
+  namePt       String
+  nameEn       String
+  code         String         @unique
+  stateId      String
+  state        State          @relation(fields: [stateId], references: [id])
+  User         User[]
+  Organization Organization[]
+
+  @@map("cities")
 }
