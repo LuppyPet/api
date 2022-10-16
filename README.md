@@ -27,7 +27,18 @@ or
 $ yarn
 ```
 
+After installing depedencies, you must have docker with postgresql image or postgresql installed then:
+ - Create a database named luppy
+ - Create a .env file with the connection string to connect the database
+ - Then run "yarn prisma migrate deploy" to run all migrations to the database
+
 after installing all dependecies run this command to start the application:
+
+.env example:
+
+```sh
+DATABASE_URL="postgresql://luppy:luppypassword@localhost:5432/luppy"
+```
 
 ```sh
 $ npm run dev
