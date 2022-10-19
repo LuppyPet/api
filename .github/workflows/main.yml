@@ -1,4 +1,4 @@
-name: PostgreSQL Service Example
+name: Deploy to heroku
 on: push
 
 jobs:
@@ -26,3 +26,5 @@ jobs:
           heroku_email: "lecirics@gmail.com"
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "luppy" #Must be unique in Heroku
+      - name: release
+        run: heroku container:release -a luppy web
