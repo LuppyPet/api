@@ -23,6 +23,6 @@ jobs:
       - name: deploy to heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          email: "lecirics@gmail.com"
+          heroku_email: "lecirics@gmail.com"
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "luppy" #Must be unique in Heroku
