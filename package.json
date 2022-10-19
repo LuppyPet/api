@@ -11,7 +11,7 @@
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files",
     "dev": "ts-node-dev --transpile-only --ignore-watch node_modules --respawn src/shared/infra/http/server.ts",
     "start": "node dist/shared/infra/http/server.js",
-    "heroku-postbuild": "yarn prisma migrate deploy",
+    "heroku-postbuild": "yarn prisma migrate deploy && yarn build",
     "test": "NODE_ENV=test jest"
   },
   "dependencies": {
