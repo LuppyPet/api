@@ -1,4 +1,4 @@
-name: PostgreSQL Service Example
+name: Deploy to heroku
 on: push
 
 jobs:
