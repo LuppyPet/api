@@ -1,6 +1,8 @@
-import { inject, injectable } from "tsyringe";
+import { TypeOfAnimals } from "@prisma/client";
+import { container, inject, injectable } from "tsyringe";
 
 import { AppError } from "../../../../shared/errors/AppError";
+import { CreateOrganizationUseCase } from "../../../organization/useCases/createOrganization/CreateOrganizationUseCase";
 import { IHashProvider } from "../../providers/HashProvider/models/IHashProvider";
 import { IUserRepository } from "../../repositories/IUserRepository";
 
@@ -9,6 +11,10 @@ interface IRequest {
   email: string;
   password: string;
   cityId: string;
+  type: "ong" | "user" | "vet";
+  document: string;
+  organization: string;
+  help: TypeOfAnimals[];
 }
 
 @injectable()
@@ -20,7 +26,16 @@ class CreateUserUseCase {
     private hashProvider: IHashProvider
   ) {}
 
-  async execute({ name, email, password, cityId }: IRequest): Promise<void> {
+  async execute({
+    name,
+    email,
+    password,
+    cityId,
+    type,
+    document,
+    help,
+    organization,
+  }: IRequest): Promise<void> {
     const userAlreadyExists = await this.userRepository.findByEmail(email);
 
     if (userAlreadyExists) {
@@ -29,14 +44,28 @@ class CreateUserUseCase {
         code: "not.found",
       });
     }
+
     const passwordHash = await this.hashProvider.generateHash(password);
 
-    await this.userRepository.create({
+    const owner = await this.userRepository.create({
       name,
       email,
       password: passwordHash,
       cityId,
     });
+
+    if (type === "ong" && owner) {
+      const createOrganizationUseCase = container.resolve(
+        CreateOrganizationUseCase
+      );
+      await createOrganizationUseCase.execute({
+        cityId,
+        document,
+        help,
+        name: organization,
+        ownerId: owner.id,
+      });
+    }
   }
 }
 

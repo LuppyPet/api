@@ -10,8 +10,8 @@ class UserRepository implements IUserRepository {
     email,
     password,
     cityId,
-  }: ICreateUserDTO): Promise<void> {
-    await prisma.user.create({
+  }: ICreateUserDTO): Promise<User> {
+    const user = await prisma.user.create({
       data: {
         email,
         name,
@@ -19,6 +19,8 @@ class UserRepository implements IUserRepository {
         cityId,
       },
     });
+
+    return user;
   }
   async findById(id: string): Promise<User | null> {
     const user = await prisma.user.findUnique({ where: { id } });

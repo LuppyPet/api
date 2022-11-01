@@ -45,17 +45,18 @@ model UserToken {
 }
 
 model Organization {
-  id        String   @id @default(uuid())
+  id        String          @id @default(uuid())
   name      String
-  cnpj      String
+  document  String          @unique
   cityId    String
-  city      City     @relation(fields: [cityId], references: [id])
-  ownerId   String   @unique
-  owner     User     @relation("owner", fields: [ownerId], references: [id])
-  members   User[]   @relation("member")
+  help      TypeOfAnimals[]
+  city      City            @relation(fields: [cityId], references: [id])
+  ownerId   String          @unique
+  owner     User            @relation("owner", fields: [ownerId], references: [id])
+  members   User[]          @relation("member")
   animals   Animal[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 
   @@map("organizations")
 }
@@ -123,6 +124,7 @@ model State {
   namePt    String
   nameEn    String
   code      String  @unique
+  uf_code   Int
   countryId String
   country   Country @relation(fields: [countryId], references: [id])
   City      City[]
@@ -134,11 +136,19 @@ model City {
   id           String         @id @default(uuid())
   namePt       String
   nameEn       String
-  code         String         @unique
   stateId      String
+  latitude     Float
+  longitude    Float
+  ddd          Int
   state        State          @relation(fields: [stateId], references: [id])
   User         User[]
   Organization Organization[]
 
   @@map("cities")
+}
+
+enum TypeOfAnimals {
+  CATS
+  DOGS
+  OTHERS
 }

@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "TypeOfAnimals" AS ENUM ('CATS', 'DOGS', 'OTHERS');
+
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
@@ -28,8 +31,9 @@ CREATE TABLE "user_tokens" (
 CREATE TABLE "organizations" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "cnpj" TEXT NOT NULL,
+    "document" TEXT NOT NULL,
     "cityId" TEXT NOT NULL,
+    "help" "TypeOfAnimals"[],
     "ownerId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -95,6 +99,7 @@ CREATE TABLE "states" (
     "namePt" TEXT NOT NULL,
     "nameEn" TEXT NOT NULL,
     "code" TEXT NOT NULL,
+    "uf_code" INTEGER NOT NULL,
     "countryId" TEXT NOT NULL,
 
     CONSTRAINT "states_pkey" PRIMARY KEY ("id")
@@ -105,8 +110,10 @@ CREATE TABLE "cities" (
     "id" TEXT NOT NULL,
     "namePt" TEXT NOT NULL,
     "nameEn" TEXT NOT NULL,
-    "code" TEXT NOT NULL,
     "stateId" TEXT NOT NULL,
+    "latitude" DOUBLE PRECISION NOT NULL,
+    "longitude" DOUBLE PRECISION NOT NULL,
+    "ddd" INTEGER NOT NULL,
 
     CONSTRAINT "cities_pkey" PRIMARY KEY ("id")
 );
@@ -116,6 +123,9 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
 CREATE INDEX "FKUserToken" ON "user_tokens"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "organizations_document_key" ON "organizations"("document");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "organizations_ownerId_key" ON "organizations"("ownerId");
@@ -128,9 +138,6 @@ CREATE UNIQUE INDEX "diseases_name_key" ON "diseases"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "states_code_key" ON "states"("code");
-
--- CreateIndex
-CREATE UNIQUE INDEX "cities_code_key" ON "cities"("code");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_cityId_fkey" FOREIGN KEY ("cityId") REFERENCES "cities"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
