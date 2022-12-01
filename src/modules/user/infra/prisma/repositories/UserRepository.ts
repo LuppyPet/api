@@ -28,16 +28,14 @@ class UserRepository implements IUserRepository {
     return user;
   }
   async findByEmail(
-    email: string,
-    showPassword = false
-  ): Promise<Pick<User, "id" | "name" | "email" | "password"> | null> {
+    email: string
+  ): Promise<Pick<User, "id" | "name" | "email"> | null> {
     const user = await prisma.user.findUnique({
       where: { email },
       select: {
         id: true,
         name: true,
         email: true,
-        password: showPassword,
       },
     });
 

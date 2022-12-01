@@ -43,7 +43,7 @@ class AuthenticateUserUseCase {
       secretToken,
     } = auth;
 
-    const userExists = await this.userRepository.findByEmail(email, true);
+    const userExists = await this.userRepository.findByEmail(email);
 
     if (!userExists) {
       throw new AppError({
@@ -53,7 +53,7 @@ class AuthenticateUserUseCase {
       });
     }
 
-    const user = await this.userRepository.findByEmail(email, true);
+    const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
       throw new AppError({
