@@ -12,6 +12,7 @@ interface IErrorProps {
     | "token.invalid"
     | "prisma.error"
     | "unfinished.register"
+    | "already.exists"
     | "incorrect.credentials";
 }
 

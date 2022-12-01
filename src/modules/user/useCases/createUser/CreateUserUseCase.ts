@@ -41,7 +41,7 @@ class CreateUserUseCase {
     if (userAlreadyExists) {
       throw new AppError({
         message: "User already exists",
-        code: "not.found",
+        code: "already.exists",
       });
     }
 
