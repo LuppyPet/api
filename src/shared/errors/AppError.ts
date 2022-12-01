@@ -7,7 +7,6 @@ interface IErrorProps {
     | "duplicated"
     | "unauthorized"
     | "missing.data"
-    | "bid_offer.expired"
     | "token.expired"
     | "token.missing"
     | "token.invalid"
